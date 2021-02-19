@@ -1,5 +1,7 @@
 ## lab1 gRPC
 
+### Distributed gRPC enabled matrix multiplication
+
 install
 ```
 mvn clean install
