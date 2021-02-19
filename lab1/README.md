@@ -1,4 +1,4 @@
-## lab1 gRPC
+## Lab 1 - gRPC
 
 ### Distributed gRPC enabled matrix multiplication
 
