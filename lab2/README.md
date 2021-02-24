@@ -4,7 +4,7 @@ This maven project is an implementation of a simple REST API using the SpringBoo
 I'm only using GET requests to interact with the API. In a non-demo situation I would be using more semantically correct HTTP methods.
 
 
-install
+Install
 ```
 mvn clean install
 ```
