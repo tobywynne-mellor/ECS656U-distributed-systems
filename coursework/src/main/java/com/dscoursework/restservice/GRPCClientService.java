@@ -1,9 +1,9 @@
 package com.dscoursework.restservice;
 
-import com.dscorsework.grpc.BlockMultServiceGrpc;
-import com.dscorsework.grpc.BlockMultServiceGrpc.BlockMultServiceBlockingStub;
-import com.dscorsework.grpc.MatrixRequest;
-import com.dscorsework.grpc.MatrixResponse;
+import com.dscoursework.grpc.BlockMultServiceGrpc;
+import com.dscoursework.grpc.BlockMultServiceGrpc.BlockMultServiceBlockingStub;
+import com.dscoursework.grpc.MatrixRequest;
+import com.dscoursework.grpc.MatrixResponse;
 import com.dscoursework.matrix.MatrixUtils;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;

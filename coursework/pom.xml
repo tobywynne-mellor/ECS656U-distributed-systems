@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.dscoursework</groupId>
-    <artifactId>dscoursework</artifactId>
+    <artifactId>com.dscoursework</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>grpc-client</name>
     <description>Demo project for Spring Boot</description>
@@ -96,7 +96,32 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <executions>
+                    <execution>
+                        <id>server</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>com.dscoursework.grpc.server.GrpcServer</mainClass>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>client</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>com.dscoursework.restservice.RestServiceApplication</mainClass>
+                        </configuration>
+                    </execution>
+                </executions>
+
+            </plugin>
         </plugins>
     </build>
-
 </project>

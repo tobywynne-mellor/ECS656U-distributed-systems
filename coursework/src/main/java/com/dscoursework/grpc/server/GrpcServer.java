@@ -3,10 +3,8 @@ package com.dscoursework.grpc.server;
 import ch.qos.logback.classic.Level;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
-import org.slf4j.impl.StaticLoggerBinder;
 
 import java.io.IOException;
-import org.slf4j.impl.StaticLoggerBinder;
 
 public class GrpcServer extends Thread {
     int port;
