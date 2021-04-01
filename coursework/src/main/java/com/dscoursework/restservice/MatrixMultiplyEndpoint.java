@@ -22,11 +22,11 @@ public class MatrixMultiplyEndpoint {
 
 
 	@PostMapping("/matrixMultiply")
-	public String matrixMultiply(@RequestParam("matrixFile1") MultipartFile matrixFile1, @RequestParam("matrixFile2") MultipartFile matrixFile2) {
+	public String matrixMultiply(@RequestParam("matrixFile1") MultipartFile matrixFile1, @RequestParam("matrixFile2") MultipartFile matrixFile2, @RequestParam("deadline") String deadline) {
 	    try {
 			String matrix1String = new String(matrixFile1.getBytes(), StandardCharsets.UTF_8);
 			String matrix2String = new String(matrixFile2.getBytes(), StandardCharsets.UTF_8);
-			return grpcClientService.multiplyMatrixFiles(matrix1String, matrix2String);
+			return grpcClientService.multiplyMatrixFiles(matrix1String, matrix2String, Long.parseLong(deadline));
 	    } catch(IOException | InvalidMatrixException | ExecutionException | InterruptedException e) {
 	    	e.printStackTrace();
 	    	return e.getLocalizedMessage();

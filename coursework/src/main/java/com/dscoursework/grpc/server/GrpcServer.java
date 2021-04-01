@@ -35,6 +35,7 @@ public class GrpcServer extends Thread {
         Server server = ServerBuilder.forPort(port)
                 .addService(new BlockMultServiceImpl(threadNumber)).build();
 
+
         System.out.println("Starting server " + threadNumber + " on " + port);
 
         try {

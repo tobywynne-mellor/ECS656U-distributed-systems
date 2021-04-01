@@ -25,6 +25,8 @@ import static com.google.common.math.IntMath.isPowerOfTwo;
 @Service
 public class GRPCClientService {
 
+	long deadline;
+
 	@Autowired
 	private Environment env;
 
@@ -82,8 +84,11 @@ public class GRPCClientService {
 
 	private ManagedChannel[] createChannels() {
 		ManagedChannel[] chans = new ManagedChannel[stubPorts.length];
+		System.out.println("Connecting to server at: " + serverAddress);
+
 		for(int i =0; i < stubPorts.length; i++) {
 			chans[i] = ManagedChannelBuilder.forAddress(serverAddress, stubPorts[i])
+					.keepAliveWithoutCalls(true)
 					.usePlaintext()
 					.build();
 		}
@@ -92,13 +97,13 @@ public class GRPCClientService {
 
 	//private static final int MAX = 4;
 
-	public String multiplyMatrixFiles(String matrixStringA, String matrixStringB) throws InvalidMatrixException, ExecutionException, InterruptedException {
+	public String multiplyMatrixFiles(String matrixStringA, String matrixStringB, long deadline) throws InvalidMatrixException, ExecutionException, InterruptedException {
 		int[][] A = stringToMatrixArray(matrixStringA);
 		int[][] B = stringToMatrixArray(matrixStringB);
 		System.out.println("Matrix 1: " + MatrixUtils.encodeMatrix(A));
 		System.out.println("Matrix 2: " + MatrixUtils.encodeMatrix(B));
 
-		int[][] multipliedMatrixBlock = multiplyMatrixBlock(A, B);
+		int[][] multipliedMatrixBlock = multiplyMatrixBlock(A, B, deadline);
 		return MatrixUtils.encodeMatrix(multipliedMatrixBlock);
 	}
 
@@ -186,7 +191,7 @@ public class GRPCClientService {
 	 * Multiplies matrices using addBlock and multiplyBlock
 	 * From BlockMult.java
 	 */
-	private int[][] multiplyMatrixBlock(int A[][], int B[][]) throws InterruptedException, ExecutionException {
+	private int[][] multiplyMatrixBlock(int[][] A, int[][] B, long deadline) throws InterruptedException, ExecutionException {
 
 		// split matrix blocks into 8 smaller blocks
 		HashMap<String, int[][]> blocks = splitBlocks(A, B);
@@ -207,24 +212,28 @@ public class GRPCClientService {
 
 		// remaining block calls
 		long numBlockCalls = 11L;
-		long deadline = 4175898;
 		int numberServer = (int) Math.ceil((float)footprint*(float)numBlockCalls/(float)deadline);
 		numberServer = numberServer <= 8 ? numberServer : 8;
-		int callsPerServer = (int) Math.ceil((float) numBlockCalls / (float) numberServer);
 
-		System.out.println("Using "+ (int) Math.ceil((float)numBlockCalls/(float)callsPerServer) + " servers for rest of calculation");
+		System.out.println("Using "+ numberServer + " servers for rest of calculation");
 
 		// take the least recently used stub indices for this workload to reduce traffic
 		int[] indices = takeStubIndices(numberServer);
 
 		// a thread safe index queue so each the async functions are evenly spread along the stubs
 		BlockingQueue<Integer> indexQueue = new LinkedBlockingQueue<>((int) numBlockCalls);
-		for(int i = 0; i < numBlockCalls; i++) {
-			int index = (int) Math.floor(i/callsPerServer);
-			indexQueue.add(indices[index]);
+
+		int i = 0;
+		while(indexQueue.size() != numBlockCalls) {
+		    if(indices.length == i) {
+		        i = 0;
+			}
+			indexQueue.add(indices[i]);
+			i++;
 		}
 
-		// a series of asynchronous gRPC calls
+		// a series of asynchronous calls to the gRPC blocking calls
+		// does run asynchronously as you can sometimes see the addblock function calls before some multiplication call
 		CompletableFuture<int[][]> B1C2 = CompletableFuture.supplyAsync(() -> {
 			try {
 				return multiplyBlock(blocks.get("B1"), blocks.get("C2"), indexQueue.take());
