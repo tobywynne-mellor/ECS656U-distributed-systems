@@ -8,6 +8,7 @@ import com.dscoursework.matrix.MatrixUtils;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
@@ -30,8 +31,8 @@ public class GRPCClientService {
 	//@Value("${com.dscoursework.grpc.client.stubPorts}")
 	private int[] stubPorts = {8081,8082,8083,8084,8085,8086,8087,8088};
 
-	//@Value("${com.dscoursework.grpc.client.serverAddress}")
-	private String serverAddress = "localhost";
+	@Value("${com.dscoursework.grpc.client.serverAddress}")
+	private String serverAddress;
 
 	private ManagedChannel[] channels;
 	private BlockMultServiceBlockingStub[] stubs;
