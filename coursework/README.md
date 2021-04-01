@@ -5,17 +5,17 @@
 - uses deadline scaling as the client side loadbalancing algorithm
 
 
-install
+### Install
 ```
 mvn clean install
 ```
 
-Launch the server
+### Launch the server
 ```
 mvn exec:java@server
 ```
 
-Launch the client
+### Launch the client
 ```
 mvn exec:java@client
 ```
